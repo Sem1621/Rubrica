@@ -12,5 +12,7 @@ namespace Rubrica.Data
         }
         
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Utente> Utente { get; set; }
+        public DbSet<TipoContatto> TipoContatto {get; set; }
     }
 }
