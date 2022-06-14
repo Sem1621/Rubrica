@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace Rubrica.Data
 {
@@ -9,5 +10,7 @@ namespace Rubrica.Data
         {
             
         }
+        
+        public DbSet<Contact> Contacts { get; set; }
     }
 }

@@ -1,7 +1,4 @@
 {
-  "ConnectionString": {
-    "DefaultConnection": "Data Source=AC-ALEON;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
-  }
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
