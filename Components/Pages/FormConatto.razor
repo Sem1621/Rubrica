@@ -1,0 +1,18 @@
+﻿@page "/test"
+@namespace Components.Pages
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="@tipoContatto" @OnValidSubmit="Submit">
+	<p>
+		<label for="telefono" >Telefono: </label>
+		<input id="telefono" @bind-value="tipoContatto.telefono"/>
+	</p>
+	<p>
+		<label for="email">Email: </label>
+		<input id="email" @bind-value="tipoContatto.email"/>
+	</p>
+</EditForm>
+
+@code {
+	private TipoContatto tipoContatto = new TipoContatto();
+}
