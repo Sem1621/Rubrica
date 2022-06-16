@@ -2,7 +2,7 @@ namespace Rubrica.Data
 {
     public class WeatherForecast
     {
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } //ciao da visual studio
 
         public int TemperatureC { get; set; }
 
