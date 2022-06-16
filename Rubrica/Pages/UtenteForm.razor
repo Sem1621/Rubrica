@@ -1,0 +1,59 @@
+﻿@page "/utente"
+@namespace Components.Pages
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Text.Json
+@using System.Linq
+@using Microsoft.EntityFrameworkCore
+@using Rubrica.Data
+@inject IDbContextFactory<DataContext> DbFactory
+
+<EditForm Model="@utente" OnValidSubmit="@Submit">
+	<p>
+		<label for="surname" >Surname: </label>
+		<input id="surname" @bind-value="utente.Surname"/>
+	</p>
+	<p>
+		<label for="name">Name: </label>
+		<input id="name" @bind-value="utente.Name"/>
+	</p>
+
+	<button type="submit">submit</button>
+</EditForm>
+@if (displayinfo)
+{
+    <span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
+}
+<br />
+<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
+
+
+
+@code{
+	//[Parameter]
+ //   public Utente utente {get; set;}	
+	private Utente utente = new Utente();
+
+	private bool displayinfo = false;
+
+	private async Task Submit()
+	{
+		try
+		{
+			var context = DbFactory.CreateDbContext();
+			Contact contatto = new Contact
+				{
+					tipoContatto = new TipoContatto(),
+					utente = utente //new Utente()
+				};
+			context.Contacts.Add(contatto);
+			context.SaveChanges();
+			context.Dispose();
+			//await JS.InvokeVoidAsync("console.log", JsonSerializer.Serialize(contatto));
+		}
+		finally
+		{
+			
+		}
+	}
+
+}
