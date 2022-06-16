@@ -4,9 +4,11 @@
 @using System.Text.Json
 @using System.Linq
 @using Microsoft.EntityFrameworkCore
+@using Rubrica.helper
 @using Rubrica.Data
 @inject IJSRuntime JS
 @inject IDbContextFactory<DataContext> DbFactory
+@inject State stato
 
 <EditForm Model="@tipoContatto" OnValidSubmit="@Submit">
 	<p>
@@ -18,30 +20,38 @@
 		<input id="email" @bind-value="tipoContatto.email"/>
 	</p>
 
-	<button type="submit">submit</button>
+	<button type="submit" disabled="@loggato">submit</button>
 </EditForm>
 
 @code {
 	private TipoContatto tipoContatto = new TipoContatto();
 	private DbContext Context;
-	protected override async Task OnInitializedAsync()
-	{
+	private bool loggato = true;
 
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		if (stato.utenteLoggato != null)
+		{
+			loggato = false;
+		}
 	}
 
 	private async Task Submit()
 	{
 		try
 		{
-			var context = DbFactory.CreateDbContext();
-			Contact contatto = new Contact
-				{
-					tipoContatto = tipoContatto,
-					utente = new Utente()
-				};
-			context.Contacts.Add(contatto);
-			context.SaveChanges();
-			context.Dispose();
+			if(!loggato){
+				var context = DbFactory.CreateDbContext();
+				Contact contatto = new Contact
+					{
+						tipoContatto = tipoContatto,
+						utente = stato.utenteLoggato
+					};
+				context.Contacts.Add(contatto);
+				context.SaveChanges();
+				context.Dispose();
+			}
 			//await JS.InvokeVoidAsync("console.log", JsonSerializer.Serialize(contatto));
 		}
 		finally

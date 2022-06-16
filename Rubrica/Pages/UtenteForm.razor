@@ -1,13 +1,19 @@
 ﻿@page "/utente"
+@page "/registra"
 @namespace Components.Pages
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Text.Json
 @using System.Linq
 @using Microsoft.EntityFrameworkCore
 @using Rubrica.Data
+@using Rubrica.helper
+@inject IJSRuntime JS
 @inject IDbContextFactory<DataContext> DbFactory
+@inject State stato
 
-<EditForm Model="@utente" OnValidSubmit="@Submit">
+@if(getPage() == "registra")
+{
+	<EditForm Model="@utente" OnValidSubmit="@Register">
 	<p>
 		<label for="surname" >Surname: </label>
 		<input id="surname" @bind-value="utente.Surname"/>
@@ -18,41 +24,93 @@
 	</p>
 
 	<button type="submit">submit</button>
-</EditForm>
-@if (displayinfo)
-{
-    <span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
+	</EditForm>
+	@if (displayinfo)
+	{
+		<span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
+	}
+	<br />
+	<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
 }
-<br />
-<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
+else if(getPage() == "utente")
+{
+	<EditForm Model="@utente" OnValidSubmit="@Login">
+	<p>
+		<label for="surname" >Surname: </label>
+		<input id="surname" @bind-value="utente.Surname"/>
+	</p>
+	<p>
+		<label for="name">Name: </label>
+		<input id="name" @bind-value="utente.Name"/>
+	</p>
+
+	<button type="submit">submit</button>
+	</EditForm>
+	@if (displayinfo)
+	{
+		<span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
+	}
+	<br />
+	<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
+}
+
 
 
 
 @code{
-	//[Parameter]
- //   public Utente utente {get; set;}	
-	private Utente utente = new Utente();
+	[Inject]
+	private NavigationManager navManager { get; set; }
+	private Utente? utente = new Utente();
 
 	private bool displayinfo = false;
 
-	private async Task Submit()
+	protected override void  OnInitialized()
+	{
+
+		base.OnInitialized();
+		var page = getPage();
+	}
+
+	private string getPage()
+	{
+		var page = navManager.ToBaseRelativePath(navManager.Uri);
+		return page;
+	}
+
+	private async Task Register()
 	{
 		try
 		{
 			var context = DbFactory.CreateDbContext();
-			Contact contatto = new Contact
-				{
-					tipoContatto = new TipoContatto(),
-					utente = utente //new Utente()
-				};
-			context.Contacts.Add(contatto);
+			Utente nuovoUtente = utente;
+			if(nuovoUtente != null)
+				context.Utente.Add(nuovoUtente);
 			context.SaveChanges();
 			context.Dispose();
-			//await JS.InvokeVoidAsync("console.log", JsonSerializer.Serialize(contatto));
 		}
-		finally
+		catch
 		{
+
+		}
+	}
+
+	private async Task Login()
+	{
+		bool esiste;
+		try
+		{
+			var context = DbFactory.CreateDbContext();
+			var ricercaUtente = context.Utente
+				.Where(u => u.Name == utente.Name && u.Surname == utente.Surname);
 			
+			esiste =  ricercaUtente != null ? true : false;
+			context.Dispose();
+			if (esiste)
+				stato.utenteLoggato = ricercaUtente.First();
+		}
+		catch
+		{
+
 		}
 	}
 

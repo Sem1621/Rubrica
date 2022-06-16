@@ -1,0 +1,43 @@
+﻿@page "/lista"
+@using Microsoft.EntityFrameworkCore
+@using Data
+@using Rubrica.helper
+@inject IDbContextFactory<DataContext> DbFactory
+@inject State stato
+<h3>ListaContatti</h3>
+
+@if(contatti != null && stato.utenteLoggato != null){
+	@foreach (var contatto in contatti){
+		<p>@contatto.telefono</p>
+		<p>@contatto.email</p>
+	}
+}
+else {
+	<p>contatti non trovati</p>
+}
+
+
+@code {
+	private List<TipoContatto> contatti;
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		try
+		{
+			var context = DbFactory.CreateDbContext();
+			contatti = context.Contacts
+			.Where(c => c.utente == stato.utenteLoggato)
+			.Join(context.TipoContatto,
+				c  => c.tipoContatto.Id,
+				tc => tc.Id,
+				(contacts,tipoContatto) => new TipoContatto()
+				)
+				.ToList();
+			context.Dispose();
+		}
+		catch
+		{
+			
+		}
+	}
+}
