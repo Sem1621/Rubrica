@@ -9,21 +9,31 @@
 @inject IJSRuntime JS
 @inject IDbContextFactory<DataContext> DbFactory
 @inject State stato
-
+<div class="container mycontainer">
 <EditForm Model="@tipoContatto" OnValidSubmit="@Submit">
-	<p>
-		<label for="telefono" >Telefono: </label>
-		<input id="telefono" @bind-value="tipoContatto.telefono"/>
-	</p>
-	<p>
-		<label for="email">Email: </label>
-		<input id="email" @bind-value="tipoContatto.email"/>
-	</p>
 
-	<button type="submit" disabled="@loggato">submit</button>
+	
+	<!-- Default form contact -->
+<div class="text-center border border-light p-5">
+
+    <p class="h4 mb-4">Contact us</p>
+
+    <!-- Name -->
+    <input type="text" id="telefono" class="form-control mb-4" placeholder="Telefono" @bind-value="tipoContatto.telefono">
+
+    <!-- Email -->
+    <input type="email" id="email" class="form-control mb-4" placeholder="E-mail"  @bind-value="tipoContatto.email">
+
+    <!-- Send button -->
+    <button class="btn btn-info btn-block" type="submit" disabled="@loggato">aggioungi</button>
+
+</div>
 </EditForm>
+</div>
 
 @code {
+	[Inject]
+	NavigationManager navManager { get; set; }
 	private TipoContatto tipoContatto = new TipoContatto();
 	private bool loggato = true;
 
@@ -41,6 +51,7 @@
 		try
 		{
 			if(!loggato){
+				loggato = false;
 				var context = DbFactory.CreateDbContext();
 				Contact contatto = new Contact();
 				tipoContatto.contacts.Add(contatto);
@@ -54,7 +65,8 @@
 		}
 		finally
 		{
-			
+			loggato = true;
+			navManager.NavigateTo("lista");
 		}
 	}
 }

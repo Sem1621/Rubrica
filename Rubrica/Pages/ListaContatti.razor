@@ -22,6 +22,7 @@
 							<p class="text-data">@contatto.email</p>
 						</li>
 					</ul>
+					<button class="btn btn-danger" vlaue="@contatto" onclick="">Delete</button>
 				</div>
 			</div>
 		</div>
@@ -58,7 +59,22 @@ else {
 		}
 		catch
 		{
-			
+
+		}
+	}
+
+	private void Delete(int idContatto)
+	{
+		try
+		{
+			//var context = DbFactory.CreateDbContext();
+			//var contattoCollegato = context.Contacts.Where(c =>
+			//	c.utente.Id == stato.utenteLoggato.Id && c.tipoContatto.Id == idContatto);
+			//context.Remove(contattoCollegato);
+			//context.TipoContatto.Find(contatto);
+		}
+		catch
+		{
 		}
 	}
 }
