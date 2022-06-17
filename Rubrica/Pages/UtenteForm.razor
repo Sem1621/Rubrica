@@ -13,45 +13,43 @@
 
 @if(getPage() == "registra")
 {
-	<EditForm Model="@utente" OnValidSubmit="@Register">
-	<p>
-		<label for="surname" >Surname: </label>
-		<input id="surname" @bind-value="utente.Surname"/>
-	</p>
-	<p>
-		<label for="name">Name: </label>
-		<input id="name" @bind-value="utente.Name"/>
-	</p>
+	<div class="wrapper fadeInDown">
+	  <div id="formContent">
+		<!-- Tabs Titles -->
 
-	<button type="submit">submit</button>
-	</EditForm>
-	@if (displayinfo)
-	{
-		<span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
-	}
-	<br />
-	<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
+		<!-- Login Form -->
+		<EditForm Model="@utente" OnValidSubmit="@Register">
+			<input type="text" id="surname" class="fadeIn second"  @bind-value="utente.Surname" name="login" placeholder="surname">
+			<input type="text" id="name" class="fadeIn third" name="login" @bind-value="utente.Name" placeholder="name">
+			@if (displayError)
+			{
+					<p style="color: red;">utente non trovato</p>
+			}
+			<input type="submit" class="fadeIn fourth">
+		</EditForm>
+
+	  </div>
+	</div>
 }
 else if(getPage() == "utente")
 {
-	<EditForm Model="@utente" OnValidSubmit="@Login">
-	<p>
-		<label for="surname" >Surname: </label>
-		<input id="surname" @bind-value="utente.Surname"/>
-	</p>
-	<p>
-		<label for="name">Name: </label>
-		<input id="name" @bind-value="utente.Name"/>
-	</p>
+	<div class="wrapper fadeInDown">
+	  <div id="formContent">
+		<!-- Tabs Titles -->
 
-	<button type="submit">submit</button>
-	</EditForm>
-	@if (displayinfo)
-	{
-		<span>L'utente loggato si chiama @utente.Surname @utente.Name </span>
-	}
-	<br />
-	<button @onclick="@(() => { displayinfo = !displayinfo; })">Show Info</button><br />
+		<!-- Login Form -->
+		<EditForm Model="@utente" OnValidSubmit="@Login">
+			<input type="text" id="surname" class="fadeIn second"  @bind-value="utente.Surname" name="login" placeholder="surname">
+			<input type="text" id="name" class="fadeIn third" name="login" @bind-value="utente.Name" placeholder="name">
+			@if (displayError)
+			{
+					<p style="color: red;">utente non trovato</p>
+			}
+			<input type="submit" class="fadeIn fourth">
+		</EditForm>
+	  </div>
+	</div>
+	
 }
 
 
@@ -62,7 +60,7 @@ else if(getPage() == "utente")
 	private NavigationManager navManager { get; set; }
 	private Utente? utente = new Utente();
 
-	private bool displayinfo = false;
+	private bool displayError = false;
 
 	protected override void  OnInitialized()
 	{
@@ -92,6 +90,10 @@ else if(getPage() == "utente")
 		{
 
 		}
+		finally
+		{
+			navManager.NavigateTo("lista");
+		}
 	}
 
 	private async Task Login()
@@ -102,11 +104,17 @@ else if(getPage() == "utente")
 			var context = DbFactory.CreateDbContext();
 			var ricercaUtente = context.Utente
 				.Where(u => u.Name == utente.Name && u.Surname == utente.Surname);
-			
-			esiste =  ricercaUtente != null ? true : false;
-			context.Dispose();
-			if (esiste)
+			if (ricercaUtente.Count() > 0)
+			{
 				stato.utenteLoggato = ricercaUtente.First();
+				navManager.NavigateTo("lista");
+			}
+			else
+			{
+				displayError = true;
+			}
+
+			context.Dispose();
 		}
 		catch
 		{

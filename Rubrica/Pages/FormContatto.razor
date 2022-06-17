@@ -25,7 +25,6 @@
 
 @code {
 	private TipoContatto tipoContatto = new TipoContatto();
-	private DbContext Context;
 	private bool loggato = true;
 
 	protected override void OnInitialized()
@@ -37,18 +36,17 @@
 		}
 	}
 
-	private async Task Submit()
+	private void Submit()
 	{
 		try
 		{
 			if(!loggato){
 				var context = DbFactory.CreateDbContext();
-				Contact contatto = new Contact
-					{
-						tipoContatto = tipoContatto,
-						utente = stato.utenteLoggato
-					};
-				context.Contacts.Add(contatto);
+				Contact contatto = new Contact();
+				tipoContatto.contacts.Add(contatto);
+				context.TipoContatto.Add(tipoContatto);
+				stato.utenteLoggato.contatti.Add(contatto);
+				context.Utente.Update(stato.utenteLoggato);
 				context.SaveChanges();
 				context.Dispose();
 			}

@@ -5,16 +5,33 @@
 @inject IDbContextFactory<DataContext> DbFactory
 @inject State stato
 <h3>ListaContatti</h3>
-
+<div class="container mycontainer">
 @if(contatti != null && stato.utenteLoggato != null){
 	@foreach (var contatto in contatti){
-		<p>@contatto.telefono</p>
-		<p>@contatto.email</p>
+		<div class="contacts">
+			<div class="card contact-card" style="width: 18rem;">
+			 <img class="card-img-top user-img" src="./images/user_img.png" alt="Card image cap">
+				<div class="card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">
+							<span class="data-label">Telefono: </span>
+							<p class="text-data">@contatto.telefono</p>
+						</li>
+						<li class="list-group-item">
+							<span class="data-label">Email: </span>
+							<p class="text-data">@contatto.email</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
 	}
 }
 else {
 	<p>contatti non trovati</p>
 }
+</div>
 
 
 @code {
@@ -30,7 +47,11 @@ else {
 			.Join(context.TipoContatto,
 				c  => c.tipoContatto.Id,
 				tc => tc.Id,
-				(contacts,tipoContatto) => new TipoContatto()
+				(contacts,tipoContatto) => new TipoContatto
+				{
+					email = tipoContatto.email,
+					telefono = tipoContatto.telefono
+				}
 				)
 				.ToList();
 			context.Dispose();
