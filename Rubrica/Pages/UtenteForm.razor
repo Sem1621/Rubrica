@@ -18,15 +18,18 @@
 		<!-- Tabs Titles -->
 
 		<!-- Login Form -->
-		<EditForm Model="@utente" OnValidSubmit="@Register">
-			<input type="text" id="surname" class="fadeIn second"  @bind-value="utente.Surname" name="login" placeholder="surname">
-			<input type="text" id="name" class="fadeIn third" name="login" @bind-value="utente.Name" placeholder="name">
+		<EditForm Model="@utente" OnInvalidSubmit="@Error" OnValidSubmit="@Register">
+			<input type="text" id="surname" class="fadeIn second" required="true" @bind-value="utente.Surname" name="login" placeholder="surname">
+			<input type="text" id="name" class="fadeIn third" required="true" name="login" @bind-value="utente.Name" placeholder="name">
+			
 			@if (displayError)
 			{
-					<p style="color: red;">utente non trovato</p>
+				<p style="color: red;">utente non trovato</p>
 			}
+			
 			<input type="submit" class="fadeIn fourth">
 		</EditForm>
+		
 
 	  </div>
 	</div>
@@ -45,9 +48,11 @@ else if(getPage() == "utente")
 			{
 					<p style="color: red;">utente non trovato</p>
 			}
+
 			<input type="submit" class="fadeIn fourth">
 		</EditForm>
-	  </div>
+			
+		</div>
 	</div>
 	
 }
@@ -59,7 +64,7 @@ else if(getPage() == "utente")
 	[Inject]
 	private NavigationManager navManager { get; set; }
 	private Utente? utente = new Utente();
-
+	private bool error = false;
 	private bool displayError = false;
 
 	protected override void  OnInitialized()
@@ -73,6 +78,11 @@ else if(getPage() == "utente")
 	{
 		var page = navManager.ToBaseRelativePath(navManager.Uri);
 		return page;
+	}
+
+	private void Error(){
+
+	    displayError = true;
 	}
 
 	private async Task Register()
